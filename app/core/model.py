@@ -10,4 +10,5 @@ def load_llama3_model():
     llm = Ollama(model="llama3:latest")
     return llm
 
+
 model = load_llama3_model()
