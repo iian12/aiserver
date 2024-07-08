@@ -46,18 +46,6 @@ async def stream_response(websocket: WebSocket, response: str):
     await websocket.send_text("[DONE]")
 
 
-@router.post("/chat")
-async def chat(request: ChatRequest):
-    try:
-        result = with_message_history.invoke(
-            {"input": request.input},
-            config={"configurable": {"session_id": request.session_id}},
-        )
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.websocket("/ws/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -66,7 +54,7 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             request = ChatRequest.model_validate_json(data)
             result = with_message_history.invoke(
-                {"input": request.input},
+                {"input": request.message},
                 config={"configurable": {"session_id": request.session_id}},
             )
 
